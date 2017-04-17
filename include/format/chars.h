@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <utility>
-
 #define STR(str_literal)                                            \
   []() {                                                            \
     struct {                                                        \
