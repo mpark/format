@@ -6,11 +6,12 @@
 
 #include <format/format.h>
 
-#include <gtest/gtest.h>
+#include <cassert>
+#include <sstream>
 
 template <typename TLhs, typename TRhs>
 void ExpectEq(const TLhs &lhs, const TRhs &rhs) {
-  EXPECT_EQ(lhs, rhs);
+  assert(lhs == rhs);
 }
 
 template <typename TVal>
@@ -26,7 +27,7 @@ std::ostream &operator<<(std::ostream &strm, const TDate &that) {
   return strm << FS("{0}-{1}-{2}").Format(that.Year, that.Month, that.Day);
 }
 
-TEST(Format, Typical) {
+int main() {
   // Typical use cases.
   ExpectEq(
       ToString(FS("so much depends upon {0}").Format("a red wheel barrow")),

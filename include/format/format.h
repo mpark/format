@@ -6,7 +6,7 @@
 #include <format/false.h>
 #include <format/parse.h>
 
-#define FS(format) MakeFormatStr(MAKE_CHARS(format))
+#define FS(format) MakeFormatStr(STR(format))
 
 template <typename TTuple, typename TArgs>
 class TFormat {
