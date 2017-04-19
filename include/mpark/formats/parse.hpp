@@ -117,7 +117,6 @@ namespace mpark {
     template <typename Cur, std::size_t Size>
     constexpr auto parse_impl(Cur, lib::size_constant<Size>) {
       using State = CONSTANT(detail::get_state(Cur::value(), Size));
-      // constexpr auto state = State::value();
       static_cast<void>(detail::Report<State::value().state>{});
       using Token = CONSTANT(
           lib::string_view(Cur::value(), State::value().end - Cur::value()));
