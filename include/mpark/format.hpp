@@ -33,10 +33,10 @@ namespace mpark {
   namespace formats {
     namespace detail {
 
-      template <typename> struct print;
-
       template <typename Tuple, typename... Args>
-      struct Format {
+      class Format {
+        public:
+
         explicit constexpr Format(std::tuple<Args &&...> &&args)
             : args_(std::move(args)) {}
 
@@ -44,6 +44,27 @@ namespace mpark {
           std::ostringstream strm;
           strm << std::move(*this);
           return strm.str();
+        }
+
+        template <std::size_t... Is>
+        void write(std::ostream &strm, std::index_sequence<Is...>) && {
+          int dummy[] = {(std::move(*this).write_elem(
+                              strm,
+                              [] {
+                                using Elem =
+                                    CONSTANT(std::get<Is>(Tuple::value()));
+                                return Elem{};
+                              }()),
+                          0)...};
+          static_cast<void>(dummy);
+        }
+
+        private:
+
+        template <typename Elem>
+        void write_elem(std::ostream &strm, Elem) && {
+          std::move(*this).write_elem_impl(
+              strm, Elem{}, lib::identity<decltype(Elem::value())>{});
         }
 
         template <typename Idx>
@@ -59,25 +80,6 @@ namespace mpark {
                              StrView,
                              lib::identity<lib::string_view>) && {
           strm << StrView::value();
-        }
-
-        template <typename Elem>
-        void write_elem(std::ostream &strm, Elem) && {
-          std::move(*this).write_elem_impl(
-              strm, Elem{}, lib::identity<decltype(Elem::value())>{});
-        }
-
-        template <std::size_t... Is>
-        void write(std::ostream &strm, std::index_sequence<Is...>) && {
-          int dummy[] = {(std::move(*this).write_elem(
-                              strm,
-                              [] {
-                                using Elem =
-                                    CONSTANT(std::get<Is>(Tuple::value()));
-                                return Elem{};
-                              }()),
-                          0)...};
-          static_cast<void>(dummy);
         }
 
         std::tuple<Args &&...> args_;
