@@ -22,7 +22,7 @@ namespace mpark {
 #define CONSTANT(...)                                     \
   struct {                                                \
     static constexpr auto value() { return __VA_ARGS__; } \
-  };
+  }
 
       template <std::size_t I>
       using size_constant = std::integral_constant<std::size_t, I>;
