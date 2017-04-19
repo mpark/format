@@ -18,11 +18,14 @@
 #include <mpark/formats/lib.hpp>
 #include <mpark/formats/parse.hpp>
 
-#define FS(str)                                                             \
-  [] {                                                                      \
-    using StrView =                                                         \
-        CONSTANT(::mpark::formats::lib::string_view(str, sizeof(str) - 1)); \
-    return StrView{};                                                       \
+#define FS(str_literal)                                          \
+  [] {                                                           \
+    constexpr char s[] = #str_literal;                           \
+    static_assert(s[0] == '"' && s[sizeof(s) - 2] == '"',        \
+                  "Argument to `FS` must be a string literal."); \
+    using StrView = CONSTANT(::mpark::formats::lib::string_view( \
+        str_literal, sizeof(str_literal) - 1));                  \
+    return StrView{};                                            \
   }()
 
 namespace mpark {
